@@ -56,7 +56,15 @@ function Weather(day) {
     this.forecast = day.summary;
     this.time = new Date(day.time * 1021.1).toDateString();
 }
-
+app.get('/boo',(request,response) =>{
+    throw new Error('something goes wrong ');
+ })
+ app.use('*', (request, response) => {
+    response.status(404).send('Not Found')
+ })
+ app.use((error,request,response) => {
+    response.status(500).send(error)
+ })
 
 
 
