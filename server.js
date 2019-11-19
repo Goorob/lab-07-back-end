@@ -4,8 +4,8 @@ require('dotenv').config();
 
 const express = require('express');
 
-
 const cors = require('cors');
+const superagent = require('superagent');
 
 const PORT = process.env.PORT;
 
@@ -18,13 +18,21 @@ app.get('/location', locationinfo);
 app.get('/weather', weatherinfo);
 
 function locationinfo(request, response) {
-    let locationData = getlocationinfo(request.query.data)
-    response.status(200).json(locationData);
-}
+    // let locationData = getlocationinfo(request.query.data)
+    // response.status(200).json(locationData);
+    getlocationinfo(request.query.data)
+    .then( locationData => response.status(200).json(locationData) );
+ }
 
 function getlocationinfo(city) {
-    let data = require('./data/geo.json');
-    return new Location(city, data);
+    // let data = require('./data/geo.json');
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${city}&key=${process.env.GEOCODE_API_KEY}`;
+    // console.log(url );
+    // return new Location(city, data);
+    return superagent.get(url)
+    .then( data => {
+      return new Location(city, data.body);
+    })
 
 }
 
